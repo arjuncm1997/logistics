@@ -1,0 +1,29 @@
+{% extends 'sellerlayout.html'%}
+{% block content %}
+
+<center>
+<div style="font-size: 50px;">Materials</div>
+</center>
+<form style="margin-left: 330px;width: 700px;" method="POST" action="/s_addmaterials" enctype="multipart/form-data" >
+
+<div>
+    <label>Name</label>
+    <input type="text" name="name">
+</div>
+<div>
+    <label>pic</label>
+    <input type="file" name="pic">
+</div>
+<div>
+    <label>submit</label>
+    <input type="submit">
+</div>
+
+
+</form>
+
+
+{% endblock %}
+
+
+
