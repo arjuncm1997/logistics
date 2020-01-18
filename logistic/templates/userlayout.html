@@ -32,6 +32,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </head>
 
 <body>
+	<div class="col-md-8">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		  {% if messages %}
+			{% for category, message in messages %}
+			  <div class="alert alert-{{ category }}">
+				{{ message }}
+			  </div>
+			{% endfor %}
+		  {% endif %}
+		{% endwith %}
+	  </div>
 	<!-- top-header -->
 	<div class="header-most-top">
 		<p>Grocery Offer Zone Top Deals & Discounts</p>
@@ -99,13 +110,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<!-- Collect the nav links, forms, and other content for toggling -->
 						<div class="collapse navbar-collapse menu--shylock" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav menu__list">
-								<li>
+								<li class="active">
 									<a class="nav-stylehead" href="/">Home
 										<span class="sr-only">(current)</span>
 									</a>
 								</li>
 								<li class="">
-									<a class="nav-stylehead" href="/about">About Us</a>
+									<a class="nav-stylehead" href="#projects">Offers</a>
+                                </li>
+                                <li class="">
+									<a class="nav-stylehead" href="#materials">Materials</a>
 								</li>
 								<li class="dropdown">
 									<a href="#" class="dropdown-toggle nav-stylehead" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Kitchen
@@ -164,7 +178,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 												</ul>
 											</div>
 											<div class="col-sm-4 multi-gd-img">
-												<img src="../static/images/nav.png" alt="">
+												<img src="images/nav.png" alt="">
 											</div>
 											<div class="clearfix"></div>
 										</div>
@@ -230,9 +244,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 										</div>
 									</ul>
 								</li>
-								<li class="">
-									<a class="nav-stylehead" href="faqs.html">Faqs</a>
-								</li>
+								
 								<li class="dropdown">
 									<a class="nav-stylehead dropdown-toggle" href="#" data-toggle="dropdown">Pages
 										<b class="caret"></b>
@@ -246,8 +258,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 										</li>
 									</ul>
 								</li>
-								<li class="active">
-									<a class="" href="/contact">Contact</a>
+								<li class="">
+									<a class="nav-stylehead" href="/contact">Contact</a>
+								</li>
+								<li class="">
+									<a class="nav-stylehead" href="/logout">Logout</a>
 								</li>
 							</ul>
 						</div>

@@ -32,6 +32,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </head>
 
 <body>
+	<div class="col-md-8">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		  {% if messages %}
+			{% for category, message in messages %}
+			  <div class="alert alert-{{ category }}">
+				{{ message }}
+			  </div>
+			{% endfor %}
+		  {% endif %}
+		{% endwith %}
+	  </div>
 	<!-- top-header -->
 	<div class="header-most-top">
 		<p>Grocery Offer Zone Top Deals & Discounts</p>
@@ -195,8 +206,18 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<li class="">
 									<a class="nav-stylehead" href="/contact">Contact</a>
 								</li>
-								<li class="">
-									<a class="nav-stylehead" href="/register">Register</a>
+								<li class="dropdown">
+									<a class="nav-stylehead dropdown-toggle" href="#" data-toggle="dropdown">Register
+										<b class="caret"></b>
+									</a>
+									<ul class="dropdown-menu agile_short_dropdown">
+										<li>
+											<a href="/registeruser">User</a>
+										</li>
+										<li>
+											<a href="/registerseller">Seller</a>
+										</li>
+									</ul>
 								</li>
 								<li class="">
 									<a class="nav-stylehead" href="/login">Login</a>
