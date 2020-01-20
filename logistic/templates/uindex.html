@@ -75,7 +75,37 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<!-- //shop locator (popup) -->
 	<!-- signin Model -->
 	<!-- Modal1 -->
-	
+	<div class="modal fade" id="cart" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body modal-body-sub_agile">
+					<div class="main-mailposi">
+						<span class="fa fa-envelope-o" aria-hidden="true"></span>
+					</div>
+					<div class="modal_body_left modal_body_left1">
+						<h3 class="agileinfo_sign">Add To Cart </h3>
+						
+						<form action="" method="post" method="POST">
+							<div class="styled-input agile-styled-input-top">
+    
+								<div class="styled-input agile-styled-input-top">
+									<input type="text" placeholder="Name" name="Name" required="">
+								</div>
+							</div>
+							
+						</form>
+						<div class="clearfix"></div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+			</div>
+			<!-- //Modal content-->
+		</div>
+	</div>
 	<!-- //Modal1 -->
 	<!-- //signin Model -->
 	<!-- signup Model -->
@@ -255,7 +285,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									</ul>
 								</li>
 								<li class="">
-									<a class="nav-stylehead" href="/contact">Contact</a>
+									<a class="nav-stylehead" href="#myModal1">Contact</a>
 								</li>
 								<li class="">
 									<a class="nav-stylehead" href="/logout">Logout</a>
@@ -679,10 +709,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					<!-- first section (nuts) -->
 					<div class="product-sec1">
 						<h3 class="heading-tittle">Nuts</h3>
+						{% for mat in material%}
 						<div class="col-md-4 product-men">
 							<div class="men-pro-item simpleCart_shelfItem">
 								<div class="men-thumb-item">
-									<img src="../static/images/m1.jpg" alt="">
+									<img src="../static/pics/{{mat.image}}" style="width: 93px;height: 150px;"   alt="">
 									<div class="men-cart-pro">
 										<div class="inner-men-cart-pro">
 											<a href="single.html" class="link-product-add-cart">Quick View</a>
@@ -691,152 +722,26 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<span class="product-new-top">New</span>
 								</div>
 								<div class="item-info-product ">
+									<h3>
+										<a href="single.html">{{mat.name}}</a>
+									</h3>
 									<h4>
-										<a href="single.html">Almonds, 100g</a>
+										<a href="single.html">{{mat.brand}}</a>
 									</h4>
 									<div class="info-product-price">
-										<span class="item_price">$149.00</span>
+										<span class="item_price">${{mat.price}}</span>
 										<del>$280.00</del>
 									</div>
-									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="#" method="post">
-											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="Almonds, 100g" />
-												<input type="hidden" name="amount" value="149.00" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
-												<input type="submit" name="submit" value="Add to cart" class="button" />
-											</fieldset>
-										</form>
+									<center>
+									<div class="newbutton" style="width: 233.219px;">
+									<a href="/umaterialprofile/{{mat.id}}" style="color: white;">ADD TO CART</a>
 									</div>
-
+								</center>
 								</div>
 							</div>
 						</div>
-						<div class="col-md-4 product-men">
-							<div class="men-pro-item simpleCart_shelfItem">
-								<div class="men-thumb-item">
-									<img src="../static/images/m1.jpg" alt="">
-									<div class="men-cart-pro">
-										<div class="inner-men-cart-pro">
-											<a href="single.html" class="link-product-add-cart">Quick View</a>
-										</div>
-									</div>
-									<span class="product-new-top">New</span>
-								</div>
-								<div class="item-info-product ">
-									<h4>
-										<a href="single.html">Almonds, 100g</a>
-									</h4>
-									<div class="info-product-price">
-										<span class="item_price">$149.00</span>
-										<del>$280.00</del>
-									</div>
-									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="#" method="post">
-											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="Almonds, 100g" />
-												<input type="hidden" name="amount" value="149.00" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
-												<input type="submit" name="submit" value="Add to cart" class="button" />
-											</fieldset>
-										</form>
-									</div>
-
-								</div>
-							</div>
-						</div>
-						<div class="col-md-4 product-men">
-							<div class="men-pro-item simpleCart_shelfItem">
-								<div class="men-thumb-item">
-									<img src="../static/images/m2.jpg" alt="">
-									<div class="men-cart-pro">
-										<div class="inner-men-cart-pro">
-											<a href="single.html" class="link-product-add-cart">Quick View</a>
-										</div>
-									</div>
-									<span class="product-new-top">New</span>
-
-								</div>
-								<div class="item-info-product ">
-									<h4>
-										<a href="single.html">Cashew Nuts, 100g</a>
-									</h4>
-									<div class="info-product-price">
-										<span class="item_price">$200.00</span>
-										<del>$420.00</del>
-									</div>
-									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="#" method="post">
-											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="Cashew Nuts, 100g" />
-												<input type="hidden" name="amount" value="200.00" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
-												<input type="submit" name="submit" value="Add to cart" class="button" />
-											</fieldset>
-										</form>
-									</div>
-
-								</div>
-							</div>
-						</div>
-						<div class="col-md-4 product-men">
-							<div class="men-pro-item simpleCart_shelfItem">
-								<div class="men-thumb-item">
-									<img src="../static/images/m3.jpg" alt="">
-									<div class="men-cart-pro">
-										<div class="inner-men-cart-pro">
-											<a href="single.html" class="link-product-add-cart">Quick View</a>
-										</div>
-									</div>
-									<span class="product-new-top">New</span>
-
-								</div>
-								<div class="item-info-product ">
-									<h4>
-										<a href="single.html">Pista..., 250g</a>
-									</h4>
-									<div class="info-product-price">
-										<span class="item_price">$520.99</span>
-										<del>$600.99</del>
-									</div>
-									<div class="snipcart-details top_brand_home_details item_add single-item hvr-outline-out">
-										<form action="#" method="post">
-											<fieldset>
-												<input type="hidden" name="cmd" value="_cart" />
-												<input type="hidden" name="add" value="1" />
-												<input type="hidden" name="business" value=" " />
-												<input type="hidden" name="item_name" value="Pista, 250g" />
-												<input type="hidden" name="amount" value="520.99" />
-												<input type="hidden" name="discount_amount" value="1.00" />
-												<input type="hidden" name="currency_code" value="USD" />
-												<input type="hidden" name="return" value=" " />
-												<input type="hidden" name="cancel_return" value=" " />
-												<input type="submit" name="submit" value="Add to cart" class="button" />
-											</fieldset>
-										</form>
-									</div>
-
-								</div>
-							</div>
-						</div>
+						{% endfor %}
+						
 						<div class="clearfix"></div>
 					</div>
 					<!-- //first section (nuts) -->
@@ -1261,7 +1166,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		</div>
 	</div>
 	<!-- //copyright -->
-
+	
 	<!-- js-files -->
 	<!-- jquery -->
 	<script src="../static/js/jquery-2.1.4.min.js"></script>
@@ -1433,3 +1338,23 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </body>
 
 </html>
+
+
+<style>
+.newbutton {
+    font-size: 13px;
+    color: #fff;
+    background: #1accfd;
+    text-decoration: none;
+    position: relative;
+    border: none;
+    border-radius: 0;
+    width: 100%;
+    text-transform: uppercase;
+    padding: 13px;
+    outline: none;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+</style>

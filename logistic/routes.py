@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from flask import render_template, flash, redirect, request, abort, url_for
 from logistic import app,db, bcrypt
-from logistic.forms import Material, RegistrationForm, LoginForm, Offers
+from logistic.forms import Material, RegistrationForm, LoginForm, Offers, Materialedit,Reject, Cart
 from logistic.models import Materials, Login, Offer
 from random import randint
 from PIL import Image
@@ -23,7 +23,11 @@ def about():
 
 @app.route('/uindex')
 def uindex():
-    return render_template("uindex.html")
+    material = Materials.query.filter_by(status='approved').all()
+    return render_template("uindex.html",material=material)
+
+
+
 
 @app.route('/admin')
 def admin():
@@ -102,7 +106,7 @@ def s_addmaterials():
             view = pic_file
         print(view)  
     
-        material = Materials(name=form.name.data,brand=form.brand.data,place=form.place.data,price = form.place.data,avail=form.avail.data,image=view )
+        material = Materials(owner= current_user.username,name=form.name.data,brand=form.brand.data,place=form.place.data,price = form.price.data,avail=form.avail.data,image=view, status='...')
        
         db.session.add(material)
         db.session.commit()
@@ -247,4 +251,108 @@ def save_picture(form_picture):
 
 @app.route('/amaterialsview')
 def amaterialsview():
-    return render_template("amaterialsview.html")
+    material = Materials.query.filter_by( status= '...').all()
+    return render_template("amaterialsview.html",material = material)
+
+
+@app.route('/amaterialsedit/<int:id>', methods=['GET', 'POST'])
+def amaterialsedit(id):
+    material = Materials.query.get_or_404(id)
+    
+    form = Materialedit()
+    if form.validate_on_submit():
+        if form.pic.data:
+            picture_file = save_picture(form.pic.data)
+            material.image = picture_file
+        material.name = form.name.data
+        material.brand = form.brand.data
+        material.price = form.price.data
+        material.place = form.place.data
+        material.avail = form.avail.data
+        material.status = 'approved'
+        material.reason = ''
+        db.session.commit()
+        flash('Your post has been updated!', 'success')
+        return redirect('/admin')
+    elif request.method == 'GET':
+        form.name.data = material.name
+        form.brand.data = material.brand
+        form.price.data = material.price
+        form.place.data = material.place
+        form.avail.data = material.avail
+        form.owner.data = material.owner
+
+    image_file = url_for('static', filename='pics/' + material.image)
+    return render_template('amaterialsedit.html',form=form, material=material)
+
+
+@app.route('/aapprovedmaterials')
+def aapprovedmaterials():
+    material = Materials.query.filter_by( status= 'approved').all()
+    return render_template("aapprovedmaterials.html",material = material)
+
+
+@app.route('/aapprovededit/<int:id>', methods=['GET', 'POST'])
+def aapprovededit(id):
+    material = Materials.query.get_or_404(id)
+    
+    form = Materialedit()
+    if form.validate_on_submit():
+        if form.pic.data:
+            picture_file = save_picture(form.pic.data)
+            material.image = picture_file
+        material.name = form.name.data
+        material.brand = form.brand.data
+        material.price = form.price.data
+        material.place = form.place.data
+        material.avail = form.avail.data
+        db.session.commit()
+        flash('Your post has been updated!', 'success')
+        return redirect('/')
+    elif request.method == 'GET':
+        form.name.data = material.name
+        form.brand.data = material.brand
+        form.price.data = material.price
+        form.place.data = material.place
+        form.avail.data = material.avail
+        form.owner.data = material.owner
+
+    image_file = url_for('static', filename='pics/' + material.image)
+    return render_template('aapprovededit.html',form=form, material=material)
+
+
+@app.route('/admindelete/<int:id>')
+def admindelete(id):
+    task_to_delet = Materials.query.get_or_404(id)
+
+    try:
+        db.session.delete(task_to_delet)
+        db.session.commit()
+        return redirect('/amaterialsview')
+    except:
+        return 'There was a problem deleting that task'
+
+
+
+
+
+@app.route('/areject/<int:id>', methods=['GET', 'POST'])
+def areject(id):
+    material = Materials.query.get_or_404(id)
+    
+    form = Reject()
+    if form.validate_on_submit():
+        material.reason = form.reject.data
+        material.status = 'rejected'
+        db.session.commit()
+        flash('Your post has been updated!', 'success')
+        return redirect('/admin')
+    elif request.method == 'GET':
+        form.reject.data = material.reason
+    return render_template('areject.html',form=form, material=material)
+
+
+@app.route('/umaterialprofile/<int:id>')
+def umaterialprofile(id):
+    material = Materials.query.get_or_404(id)
+    return render_template("umaterialprofile.html",material = material)

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField, TextField, validators
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField,HiddenField, TextField, validators
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flask_login import current_user
@@ -60,3 +60,26 @@ class Offers(FlaskForm):
     matname=QuerySelectField('Material Name',query_factory=get_all_materials,get_label="name")
 
     submit = SubmitField('Submit')
+
+
+
+
+class Materialedit(FlaskForm):
+    name = StringField('Name',
+                        validators=[DataRequired()])
+    brand = StringField('Brand', validators=[DataRequired()])
+    avail = StringField('Avail quantity')
+    price = StringField('Price')
+    place = StringField('Place')
+    pic = FileField('Upload Picture', validators=[FileAllowed(['jpg', 'png','jpeg'])])
+    owner = StringField('Owner')
+    submit = SubmitField('Approve')
+
+class Reject(FlaskForm):
+    reject = TextAreaField('reason',
+                        validators=[DataRequired()])
+    submit = SubmitField('Reject')
+
+class Cart(FlaskForm):
+    name = StringField('Name')
+    submit = SubmitField('Confirm')

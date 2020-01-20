@@ -22,9 +22,11 @@ class Materials(db.Model):
     name = db.Column(db.String(200))
     brand = db.Column(db.String(200))
     avail = db.Column(db.String(200))
-    price = db.Column(db.Integer)
+    price = db.Column(db.String(200))
     place = db.Column(db.String(200))
     image = db.Column(db.String(20), nullable=False, default='default.jpg')
+    status = db.Column(db.String(200))
+    reason = db.Column(db.String(200))
 
     def __repr__(self):
         return f"Materials('{self.name}', '{self.brand}','{self.avail}', '{self.price}','{self.image}')"

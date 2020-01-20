@@ -14,7 +14,6 @@
             <th>Material Name</th>
             <th>Images</th>
             <th>Action</th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -32,8 +31,7 @@
                  </figure>
               </a>
            </span></td>
-           <td>{{mat.status}}</td>
-            <td><a href="/amaterialsedit/{{mat.id}}"><button>View</button></a></td>
+            <td><a href="/aapprovededit/{{mat.id}}"><button>Edit</button></a></td>
           </tr>
           {% endfor%}
         </tbody>

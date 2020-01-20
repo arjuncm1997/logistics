@@ -103,6 +103,17 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
 						</script>
 					<!-- //requried-jsfiles-for owl -->
 </head> 
+<div class="col-md-8">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
 <body class="cbp-spmenu-push">
 	<div class="main-content">
 	<div class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="cbp-spmenu-s1">
@@ -133,8 +144,8 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                 <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
-                  <li><a href=""><i class="fa fa-angle-right"></i> View</a></li>
-                  <li><a href=""><i class="fa fa-angle-right"></i> Approved Materials</a></li>
+                  <li><a href="/amaterialsview"><i class="fa fa-angle-right"></i> View & Approve </a></li>
+                  <li><a href="/aapprovedmaterials"><i class="fa fa-angle-right"></i> Approved Materials</a></li>
                 </ul>
               </li>
               <li class="treeview">

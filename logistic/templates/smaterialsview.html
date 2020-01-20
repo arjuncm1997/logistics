@@ -12,10 +12,9 @@
                   <tr >
                       <th >Name</th>
                       <th>Brand</th>
-                      <th>Price</th>
-                      <th>Place</th>   
-                      <th style="width: 180px;">Avail Qunty</th>
                       <th>Image</th>
+                      <th>Admin Status</th>
+                      <th>Reason</th>
                       <th>Action</th>                                      
                   </tr>
               </thead>   
@@ -24,9 +23,6 @@
                 <tr>
                     <td>{{mat.name}}</td>
                     <td>{{mat.brand}}</td>
-                    <td>{{mat.price}}</td>
-                    <td>{{mat.place}}</td>  
-                    <td>{{mat.avail}}</td>
                     <td><span class="image-block">
                         <a class="image-zoom" href="static/pics/{{mat.image}}" rel="prettyPhoto[gallery]" style="height: 250px;width: 335px;">
                            <figure>
@@ -37,7 +33,9 @@
                            </figure>
                         </a>
                      </span></td>
-                    <td><a href="/smaterialsedit/{{mat.id}}"><button style="color: red;">Edit</button></a>
+                     <td>{{mat.status}}</td>
+                     <td>{{mat.reason}}</td>
+                    <td><a href="/smaterialsedit/{{mat.id}}"><button style="color: red;">View</button></a>
                     </td>                                       
                 </tr>
                       {% endfor %}                                           

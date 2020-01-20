@@ -1,0 +1,136 @@
+{% extends 'adminlayout.html'%}
+{% block content %}
+
+
+<div class="main-page">
+    <div class="forms">
+        <h2 class="title1"></h2>
+        
+        <div class="row">
+            <h3 class="title1">Material View And Approve :</h3>
+            <div class="form-three widget-shadow">
+                <form class="form-horizontal" action="" method="POST" enctype="multipart/form-data">
+                    {{form.hidden_tag()}}
+                    <div class="form-group">
+                        <label for="focusedinput" class="col-sm-2 control-label">Material Name</label>
+                        <div class="col-sm-8">
+                                    {% if form.name.errors %}
+                                        {{ form.name(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.name.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.name(class="form-control form-control-lg") }}
+                                    {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="focusedinput" class="col-sm-2 control-label">Material Brand</label>
+                        <div class="col-sm-8">
+                                    {% if form.brand.errors %}
+                                        {{ form.brand(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.brand.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.brand(class="form-control form-control-lg") }}
+                                    {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="focusedinput" class="col-sm-2 control-label">Material Quantity</label>
+                        <div class="col-sm-8">
+                                    {% if form.avail.errors %}
+                                        {{ form.avail(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.avail.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.avail(class="form-control form-control-lg") }}
+                                    {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="focusedinput" class="col-sm-2 control-label">Material Price</label>
+                        <div class="col-sm-8">
+                                    {% if form.price.errors %}
+                                        {{ form.price(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.price.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.price(class="form-control form-control-lg") }}
+                                    {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="focusedinput" class="col-sm-2 control-label">Owner</label>
+                        <div class="col-sm-8">
+                                    {% if form.owner.errors %}
+                                        {{ form.owner(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.owner.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.owner(class="form-control form-control-lg") }}
+                                    {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="focusedinput" class="col-sm-2 control-label">Place</label>
+                        <div class="col-sm-8">
+                                    {% if form.place.errors %}
+                                        {{ form.place(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.place.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.place(class="form-control form-control-lg") }}
+                                    {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="focusedinput" class="col-sm-2 control-label">Image</label>
+                        <div class="col-sm-8">
+                            {{ form.pic(class="form-control-file") }}
+                            {% if form.pic.errors %}
+                                {% for error in form.pic.errors %}
+                                    <span>{{ error }}</span></br>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="focusedinput" class="col-sm-2 control-label"></label>
+                        <div class="col-sm-8">
+                            {{ form.submit(class="btn btn-outline-info") }}
+                            <a href="/areject/{{material.id}}"> Reject</a>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    
+                </form>
+            </div>
+        </div>
+        </div>
+        </div>
+
+
+
+{% endblock %}
