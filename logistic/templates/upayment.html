@@ -280,13 +280,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 						<div>
                             <div style="margin-bottom: 50px;">We also accept Cash on delivery. .</div>
-							<form action="#" method="post" class="creditly-card-form agileinfo_form">
+							<form action="/cod/{{material.id}}" method="POST" class="creditly-card-form agileinfo_form">
+								{{form.hidden_tag()}}
 								<div class="creditly-wrapper wthree, w3_agileits_wrapper">
 									<div class="credit-card-wrapper">
 										
-										<button class="submit">
-											<span>Make a payment </span>
-										</button>
+										{{ form.submit(class="btn btn-outline-info") }}
 									</div>
 								</div>
 							</form>
@@ -636,6 +635,26 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	</div>
 	<!-- //copyright -->
 
+
+
+
+	<style>
+	
+	
+	input[type="button"], input[type="submit"] {
+    transition: 0.5s all;
+    -webkit-transition: 0.5s all;
+    -moz-transition: 0.5s all;
+    -o-transition: 0.5s all;
+    color: white;
+    background-color:orangered;
+    height: 53px;
+    -ms-transition: 0.5s all;
+}
+	
+	
+	
+	</style>
 	<!-- js-files -->
 	<!-- jquery -->
 	<script src="../static/js/jquery-2.1.4.min.js"></script>

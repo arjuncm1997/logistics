@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from flask import render_template, flash, redirect, request, abort, url_for
 from logistic import app,db, bcrypt
-from logistic.forms import Material, RegistrationForm, LoginForm, Offers, Materialedit,Reject, Cart, Cart1, Cartaddress
+from logistic.forms import Material, RegistrationForm, LoginForm, Offers, Materialedit,Reject, Cart, Cart1, Cartaddress, Cod
 from logistic.models import Materials, Login, Offer
 from random import randint
 from PIL import Image
@@ -407,10 +407,22 @@ def ucartaddress(id):
 
 @app.route('/upayment/<int:id>')
 def upayment(id):
+    form = Cod()
     material = Materials.query.get_or_404(id)
-    return render_template('upayment.html')
+    return render_template('upayment.html',material = material,form=form)
 
 
-@app.route('/cod')
-def cod():
+@app.route('/cod/<int:id>',methods = ['GET','POST'])
+def cod(id):
+    form = Cod()
+    material = Materials.query.get_or_404(id)
+    if form.validate_on_submit():
+        material.upayment = 'cod'
+        material.cart = 'removed'
+        db.session.commit()
+        return redirect('/successful')
+    return render_template('/ucartaddress.html',mat = material,form=form)
     
+@app.route('/successful')
+def successful():
+    return render_template("successful.html")

@@ -97,3 +97,5 @@ class Cartaddress(FlaskForm):
     submit = SubmitField('continue')
 
 
+class Cod(FlaskForm):
+    submit = SubmitField('Make a payment')
