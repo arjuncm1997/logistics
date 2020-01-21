@@ -1,0 +1,150 @@
+{% extends 'userlayout.html' %}
+{% block content %}
+
+<div class="privacy">
+    <div class="container">
+        <!-- tittle heading -->
+        <h3 class="tittle-w3l">Checkout
+            <span class="heading-style">
+                <i></i>
+                <i></i>
+                <i></i>
+            </span>
+        </h3>
+        <!-- //tittle heading -->
+        <div class="checkout-right">
+            <h4>Your shopping cart contains:
+                <span></span>
+            </h4>
+            <div class="table-responsive">
+                <table class="timetable_sub">
+                    <thead>
+                        <tr>
+                            <th>SL No.</th>
+                            <th>Product</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Buy</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mat in material %}
+                        <tr class="rem1">
+                            <td class="invert">1</td>
+                            <td class="invert-image">
+                                <a href="single2.html">
+                                    <img src="../static/pics/{{mat.image}}" alt=" " class="img-responsive" style="width: 83.09px;height: 83.09px;">
+                                </a>
+                            </td>
+                            <td class="invert">{{mat.name}}</td>
+                            <form action="/ucartto/{{mat.id}}" method="POST">
+                                {{form.hidden_tag()}}
+                            <td class="invert">
+                                <div class="quantity">
+                                    <center>
+                                    <div class="quantity-select" style="width: 50px;">
+                                        {% if form.value.errors %}
+                                            {{ form.value(class="form-control form-control-lg is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.value.errors %}
+                                                    <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.value(class="form-control form-control-lg") }}
+                                        {% endif %}
+                                        
+                                    </div>
+                                </center>
+                                </div>
+                            </td>
+                            <td class="invert">${{mat.price}}</td>
+                            <td><a href=""><button>continue</button></a></td>
+                        </form>
+                            <td class="invert">
+                                <div class="rem">
+                                   <a href="/ucartremove/{{mat.id}}"> <div class="close1"> </div></a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script src="../static/js/minicart.js"></script>
+<script>
+    paypalm.minicartk.render(); //use only unique class names other than paypal1.minicart1.Also Replace same class name in css and minicart.min.js
+
+    paypalm.minicartk.cart.on('checkout', function (evt) {
+        var items = this.items(),
+            len = items.length,
+            total = 0,
+            i;
+
+        // Count the number of each item in the cart
+        for (i = 0; i < len; i++) {
+            total += items[i].get('quantity');
+        }
+
+        if (total < 3) {
+            alert('The minimum order quantity is 3. Please add more to your shopping cart before checking out');
+            evt.preventDefault();
+        }
+    });
+</script>
+<!-- //cart-js -->
+
+<!--quantity-->
+<script>
+    $('.value-plus').on('click', function () {
+        var divUpd = $(this).parent().find('.value'),
+            newVal = parseInt(divUpd.text(), 10) + 1;
+        divUpd.text(newVal);
+    });
+
+    $('.value-minus').on('click', function () {
+        var divUpd = $(this).parent().find('.value'),
+            newVal = parseInt(divUpd.text(), 10) - 1;
+        if (newVal >= 1) divUpd.text(newVal);
+    });
+</script>
+<!--quantity-->
+<script>
+    $(document).ready(function (c) {
+        $('.close1').on('click', function (c) {
+            $('.rem1').fadeOut('slow', function (c) {
+                $('.rem1').remove();
+            });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function (c) {
+        $('.close2').on('click', function (c) {
+            $('.rem2').fadeOut('slow', function (c) {
+                $('.rem2').remove();
+            });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function (c) {
+        $('.close3').on('click', function (c) {
+            $('.rem3').fadeOut('slow', function (c) {
+                $('.rem3').remove();
+            });
+        });
+    });
+</script>
+
+{% endblock %}

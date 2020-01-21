@@ -1,0 +1,128 @@
+{% extends 'userlayout.html' %}
+{% block content %}
+
+<div class="privacy">
+    <div class="container">
+        <!-- tittle heading -->
+        <h3 class="tittle-w3l">Checkout
+            <span class="heading-style">
+                <i></i>
+                <i></i>
+                <i></i>
+            </span>
+        </h3>
+        <!-- //tittle heading -->
+    
+        <div class="container">
+            <div class="card">
+                <div class="container-fliud">
+                    <div class="wrapper row">
+                        <div class="preview col-md-6">
+                            <div class="preview-pic tab-content">
+                              <div class="tab-pane active" id="pic-1"><img src="../static/pics/{{mat.image}}"/></div>
+                            </div>
+                            
+                        </div>
+                        <div class="details col-md-6">
+                            <h3 class="product-title">{{mat.name}}</h3>
+                            <div class="rating">
+                                <div class="stars">
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star checked"></span>
+                                    <span class="fa fa-star"></span>
+                                    <span class="fa fa-star"></span>
+                                </div>
+                                <span class="review-no"></span>
+                            </div>
+                            <p class="product-description">{{mat.desc}}</p></br>
+                            <p class="product-description">price: ${{mat.price}}</p>
+                            <h4 class="price">Total price: <span>${{mat.utotalprice}}</span></h4>
+                            
+                            <!-- <h5 class="sizes">sizes:
+                                <span class="size" data-toggle="tooltip" title="small">s</span>
+                                <span class="size" data-toggle="tooltip" title="medium">m</span>
+                                <span class="size" data-toggle="tooltip" title="large">l</span>
+                                <span class="size" data-toggle="tooltip" title="xtra large">xl</span>
+                            </h5>
+                            <h5 class="colors">colors:
+                                <span class="color orange not-available" data-toggle="tooltip" title="Not In store"></span>
+                                <span class="color green"></span>
+                                <span class="color blue"></span>
+                </h5> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+        <div class="checkout-left">
+            <div class="address_form_agile">
+                <h4>Add Details</h4>
+                <form action="/ucartaddress/{{mat.id}}" method="post" class="creditly-card-form agileinfo_form">
+                    {{form.hidden_tag()}}
+                    <div class="creditly-wrapper wthree, w3_agileits_wrapper">
+                        <div class="information-wrapper">
+                            <div class="first-row">
+                                <div class="controls">
+                                      {% if form.name.errors %}
+                                          {{ form.name(class="form-control form-control-lg is-invalid") }}
+                                          <div class="invalid-feedback">
+                                              {% for error in form.name.errors %}
+                                                  <span>{{ error }}</span>
+                                              {% endfor %}
+                                          </div>
+                                      {% else %}
+                                          {{ form.name(class="form-control form-control-lg") }}
+                                      {% endif %}
+                                </div>
+                                <div class="controls">
+                                    {% if form.phone.errors %}
+                                        {{ form.phone(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.phone.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.phone(class="form-control form-control-lg") }}
+                                    {% endif %}
+                              </div>
+                              <div class="controls">
+                                {% if form.address.errors %}
+                                    {{ form.address(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.address.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.address(class="form-control form-control-lg") }}
+                                {% endif %}
+                          </div>
+                            </div>
+                            <button class="submit check_out">Make a Payment</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}

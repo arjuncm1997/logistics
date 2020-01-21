@@ -27,6 +27,13 @@ class Materials(db.Model):
     image = db.Column(db.String(20), nullable=False, default='default.jpg')
     status = db.Column(db.String(200))
     reason = db.Column(db.String(200))
+    cart = db.Column(db.String(200))
+    desc = db.Column(db.String(200))
+    uquantity = db.Column(db.String(200))
+    upayment = db.Column(db.String(200))
+    utotalprice = db.Column(db.String(200))
+    uname = db.Column(db.String((200)))
+    uaddress = db.Column(db.String((200)))
 
     def __repr__(self):
         return f"Materials('{self.name}', '{self.brand}','{self.avail}', '{self.price}','{self.image}')"

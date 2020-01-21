@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField,HiddenField, TextField, validators
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField,IntegerField, SelectField,HiddenField, TextField, validators
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flask_login import current_user
@@ -82,4 +82,18 @@ class Reject(FlaskForm):
 
 class Cart(FlaskForm):
     name = StringField('Name')
-    submit = SubmitField('Confirm')
+    submit = SubmitField('ADD TO CART')
+
+class Cart1(FlaskForm):
+    value = IntegerField(validators=[DataRequired()])
+    submit = SubmitField('continue')
+
+class Cartaddress(FlaskForm):
+    name = StringField('Name',render_kw={"placeholder":"NAME"},
+                        validators=[DataRequired()])
+    phone = StringField('Mobile',render_kw={"placeholder":"MOBILE"})
+    address = StringField('Delivery Address',render_kw={"placeholder":"DELIVERY ADDRESS"},
+                        validators=[DataRequired()])
+    submit = SubmitField('continue')
+
+

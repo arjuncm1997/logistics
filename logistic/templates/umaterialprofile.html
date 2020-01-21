@@ -67,11 +67,14 @@
 							<span class="color orange not-available" data-toggle="tooltip" title="Not In store"></span>
 							<span class="color green"></span>
 							<span class="color blue"></span>
-						</h5>
+            </h5>
+            <form action="" method="POST">
+              {{form.hidden_tag()}}
 						<div class="action">
-							<button class="add-to-cart btn btn-default" type="button">add to cart</button>
+							{{ form.submit(class="btn btn-outline-info") }}
 							<button class="like btn btn-default" type="button"><span class="fa fa-heart"></span></button>
-						</div>
+            </div>
+          </form>
 					</div>
                 </div>
 			</div>
@@ -85,6 +88,19 @@
 
 
 <style>
+
+input[type="button"], input[type="submit"] {
+    transition: 0.5s all;
+    -webkit-transition: 0.5s all;
+    -moz-transition: 0.5s all;
+    -o-transition: 0.5s all;
+    color: white;
+    background-color: orange;
+    height: 53px;
+    -ms-transition: 0.5s all;
+}
+
+
 
 
 /*****************globals*************/

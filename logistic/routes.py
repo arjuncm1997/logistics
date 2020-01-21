@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from flask import render_template, flash, redirect, request, abort, url_for
 from logistic import app,db, bcrypt
-from logistic.forms import Material, RegistrationForm, LoginForm, Offers, Materialedit,Reject, Cart
+from logistic.forms import Material, RegistrationForm, LoginForm, Offers, Materialedit,Reject, Cart, Cart1, Cartaddress
 from logistic.models import Materials, Login, Offer
 from random import randint
 from PIL import Image
@@ -321,16 +321,6 @@ def aapprovededit(id):
     return render_template('aapprovededit.html',form=form, material=material)
 
 
-@app.route('/admindelete/<int:id>')
-def admindelete(id):
-    task_to_delet = Materials.query.get_or_404(id)
-
-    try:
-        db.session.delete(task_to_delet)
-        db.session.commit()
-        return redirect('/amaterialsview')
-    except:
-        return 'There was a problem deleting that task'
 
 
 
@@ -352,7 +342,75 @@ def areject(id):
     return render_template('areject.html',form=form, material=material)
 
 
-@app.route('/umaterialprofile/<int:id>')
+@app.route('/umaterialprofile/<int:id>', methods=['GET', 'POST'])
 def umaterialprofile(id):
+    form=Cart()
     material = Materials.query.get_or_404(id)
-    return render_template("umaterialprofile.html",material = material)
+    if form.validate_on_submit():
+        material.cart = 'added'
+        db.session.commit()
+        flash('Material added to Cart', 'success')
+        return redirect('/uindex')
+    return render_template("umaterialprofile.html",material = material, form= form)
+
+@app.route('/ucart',methods = ['GET','POST'])
+def ucart():
+    form = Cart1()
+    material = Materials.query.filter_by(cart = 'added').all()
+    
+    return render_template("ucart.html",material=material, form=form)
+
+
+@app.route('/ucartto/<int:id>', methods = ['GET','POST'])
+def ucartto(id):
+    form = Cart1()
+    material = Materials.query.get_or_404(id)
+    if form.validate_on_submit():
+        material.uquantity = form.value.data
+        material.utotalprice = int(material.price) * int(material.uquantity)
+        db.session.commit()
+        return redirect('/ucartaddress/'+str(material.id))
+    return render_template("ucart.html", form=form)
+
+@app.route('/ucartremove/<int:id>')
+def ucartremove(id):
+    remove = Materials.query.get_or_404(id)
+    remove.cart = 'removed'
+    try:
+        db.session.commit()
+        return redirect('/ucart')
+    except:
+        return 'There was a problem removing that task'
+
+
+@app.route('/ucartadd/<int:id>')
+def ucartadd(id):
+    add = Materials.query.get_or_404(id)
+    add.cart = 'added'
+    try:
+        db.session.commit()
+        return redirect('/uindex')
+    except:
+        flash('added to your cart')
+
+
+@app.route('/ucartaddress/<int:id>', methods = ['GET','POST'])
+def ucartaddress(id):
+    form = Cartaddress()
+    material = Materials.query.get_or_404(id)
+    if form.validate_on_submit():
+        material.uname = form.name.data
+        material.uaddress = form.address.data
+        db.session.commit()
+        return redirect('/upayment/'+str(material.id))
+    return render_template('/ucartaddress.html',mat = material,form=form)
+
+@app.route('/upayment/<int:id>')
+def upayment(id):
+    material = Materials.query.get_or_404(id)
+    return render_template('upayment.html')
+
+
+@app.route('/cod')
+def cod():
+    
