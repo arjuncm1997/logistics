@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from flask import render_template, flash, redirect, request, abort, url_for
 from logistic import app,db, bcrypt
-from logistic.forms import Material, RegistrationForm, LoginForm, Offers, Materialedit,Reject, Cart, Cart1, Cartaddress, Cod
+from logistic.forms import Material, RegistrationForm, LoginForm, Offers, Materialedit,Reject, Cart, Cart1,Purchaseview, Cartaddress, Cod
 from logistic.models import Materials, Login, Offer
 from random import randint
 from PIL import Image
@@ -106,7 +106,7 @@ def s_addmaterials():
             view = pic_file
         print(view)  
     
-        material = Materials(owner= current_user.username,name=form.name.data,brand=form.brand.data,place=form.place.data,price = form.price.data,avail=form.avail.data,image=view, status='...')
+        material = Materials(sowner= current_user.username,name=form.name.data,brand=form.brand.data,place=form.place.data,price = form.price.data,avail=form.avail.data,image=view, status='...')
        
         db.session.add(material)
         db.session.commit()
@@ -280,7 +280,7 @@ def amaterialsedit(id):
         form.price.data = material.price
         form.place.data = material.place
         form.avail.data = material.avail
-        form.owner.data = material.owner
+        form.owner.data = material.sowner
 
     image_file = url_for('static', filename='pics/' + material.image)
     return render_template('amaterialsedit.html',form=form, material=material)
@@ -315,7 +315,7 @@ def aapprovededit(id):
         form.price.data = material.price
         form.place.data = material.place
         form.avail.data = material.avail
-        form.owner.data = material.owner
+        form.owner.data = material.sowner
 
     image_file = url_for('static', filename='pics/' + material.image)
     return render_template('aapprovededit.html',form=form, material=material)
@@ -375,8 +375,8 @@ def ucartto(id):
 @app.route('/ucartremove/<int:id>')
 def ucartremove(id):
     remove = Materials.query.get_or_404(id)
-    remove.cart = 'removed'
     try:
+        db.session.delete(remove)
         db.session.commit()
         return redirect('/ucart')
     except:
@@ -386,12 +386,14 @@ def ucartremove(id):
 @app.route('/ucartadd/<int:id>')
 def ucartadd(id):
     add = Materials.query.get_or_404(id)
-    add.cart = 'added'
-    try:
-        db.session.commit()
-        return redirect('/uindex')
-    except:
-        flash('added to your cart')
+    material = Materials(uowner = current_user.username,cart = 'added',status = 'rejected' ,name= add.name,sowner = add.sowner,brand = add.brand,avail = add.avail,price = add.price,place = add.place,image = add.image,reason = add.reason,desc = add.desc,uquantity = add.uquantity,upayment = add.upayment,utotalprice =add.utotalprice,uname = add.uname,uaddress = add.uaddress)
+    db.session.add(material)
+    db.session.commit()
+    flash('added to your cart')
+    return redirect('/uindex')
+
+
+    
 
 
 @app.route('/ucartaddress/<int:id>', methods = ['GET','POST'])
@@ -426,3 +428,21 @@ def cod(id):
 @app.route('/successful')
 def successful():
     return render_template("successful.html")
+
+
+@app.route('/apurchasematerial')
+def apurchasematerial():
+    form =Purchaseview()
+    material = Materials.query.filter_by(upayment="cod").all()
+    return render_template("apurchasematerial.html",material = material,form=form)
+
+
+@app.route('/delivery/<int:id>',methods=['GET','POST'])
+def delivery(id):
+    form = Purchaseview()
+    material = Materials.query.get_or_404(id)
+    if form.validate_on_submit():
+        material.deliverystatus = form.name.data
+        db.session.commit()
+        return redirect('/apurchasematerial')
+    return render_template('/apurchasematerial.html',form=form)

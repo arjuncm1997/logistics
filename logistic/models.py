@@ -18,7 +18,8 @@ class Login(db.Model, UserMixin):
 
 class Materials(db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    owner = db.Column(db.String)
+    sowner = db.Column(db.String)
+    uowner = db.Column(db.String)
     name = db.Column(db.String(200))
     brand = db.Column(db.String(200))
     avail = db.Column(db.String(200))
@@ -34,6 +35,7 @@ class Materials(db.Model):
     utotalprice = db.Column(db.String(200))
     uname = db.Column(db.String((200)))
     uaddress = db.Column(db.String((200)))
+    deliverystatus = db.Column(db.String(220))
 
     def __repr__(self):
         return f"Materials('{self.name}', '{self.brand}','{self.avail}', '{self.price}','{self.image}')"

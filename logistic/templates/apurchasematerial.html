@@ -1,0 +1,82 @@
+{% extends 'adminlayout.html' %}
+{% block content %}
+
+
+<div class="main-page">
+    <div class="tables">
+        <h2 class="title1">Tables</h2>
+        <div class="table-responsive bs-example widget-shadow">
+            <h4>Responsive Table:</h4>
+            <table class="table table-bordered"> <thead> 
+                <tr> 
+                <th>Image</th>
+                 <th>Material</th> 
+                 <th>Address</th>
+                  <th>Amount</th> 
+                  <th>Payment</th> 
+                  <th>Delivery Status</th> 
+                  <th></th>
+                 </tr>
+                 </thead> 
+                 <tbody> 
+                    {% for mat in material%}
+                     <tr>
+                        <td><span class="image-block">
+                            <a class="image-zoom" href="static/pics/{{mat.image}}" rel="prettyPhoto[gallery]" style="height: 250px;width: 335px;">
+                               <figure>
+                                  <img src="static/pics/{{mat.image}}" class="img-fluid" alt="" style="height: 50px;width: 50px;">
+                                  <figcaption>
+                                     
+                                  </figcaption>
+                               </figure>
+                            </a>
+                         </span></td>
+                            <td>{{mat.name}}</br>
+                                {{mat.brand}}
+                            </td>
+                             <td>{{mat.uname}}</br>
+                                {{mat.uaddress}}
+
+                             </td>
+                              <td>${{mat.utotalprice}}</td>
+                               <td>{{mat.upayment}}</td> 
+                               <form action="/delivery/{{mat.id}}" method="POST">
+                                {{form.hidden_tag()}}
+                               <td style="width: 178px;" >
+                                {{mat.deliverystatus}}{% if form.name.errors %}
+                                        {{ form.name(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.name.errors %}
+                                                <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <select class="form-control" name="name">
+                                            <option></option>
+                                            <option>Processing</option>
+                                            <option>Shipping</option>
+                                            <option>Delivered</option>
+                                        </select>
+                                    {% endif %} 
+                               </td>
+                               <td><a>{{ form.submit(class="btn btn-outline-info") }}</a></td>
+                            </form>
+                             </tr> 
+                             {% endfor %}
+                             </tbody>
+                        </table> 
+        </div>
+    </div>
+</div>
+</div>
+
+<style>
+.form-control{
+
+
+    width: 116px;
+    height: 33px;
+}
+</style>
+
+{% endblock %}

@@ -99,3 +99,10 @@ class Cartaddress(FlaskForm):
 
 class Cod(FlaskForm):
     submit = SubmitField('Make a payment')
+
+class Purchaseview(FlaskForm):
+    name = StringField('Name',
+                        validators=[DataRequired()])
+                        
+    submit = SubmitField('submitt')
+
