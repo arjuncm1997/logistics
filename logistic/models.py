@@ -24,6 +24,8 @@ class Materials(db.Model):
     brand = db.Column(db.String(200))
     avail = db.Column(db.String(200))
     price = db.Column(db.String(200))
+    offerprice = db.Column(db.String(200))
+    discount = db.Column(db.String(200))
     place = db.Column(db.String(200))
     image = db.Column(db.String(20), nullable=False, default='default.jpg')
     status = db.Column(db.String(200))
@@ -36,6 +38,8 @@ class Materials(db.Model):
     uname = db.Column(db.String((200)))
     uaddress = db.Column(db.String((200)))
     deliverystatus = db.Column(db.String(220))
+    offer = db.Column(db.String(220),default='no')
+    purchase = db.Column(db.String(220))
 
     def __repr__(self):
         return f"Materials('{self.name}', '{self.brand}','{self.avail}', '{self.price}','{self.image}')"

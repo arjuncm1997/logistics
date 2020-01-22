@@ -23,8 +23,9 @@ def about():
 
 @app.route('/uindex')
 def uindex():
-    material = Materials.query.filter_by(status='approved').all()
-    return render_template("uindex.html",material=material)
+    material = Materials.query.filter_by(status='approved',offer='no').all()
+    material2 = Materials.query.filter_by(status='approved',offer='added').all()
+    return render_template("uindex.html",material=material,material2 = material2)
 
 
 
@@ -118,7 +119,7 @@ def s_addmaterials():
 
 @app.route('/smaterialsview')
 def smaterialsview():
-    material = Materials.query.all()
+    material = Materials.query.filter_by(sowner=current_user.username)
     return render_template("smaterialsview.html",mat=material)
 
 
@@ -152,10 +153,10 @@ def smaterialsedit(id):
 
 @app.route('/delete/<int:id>')
 def delete(id):
-    task_to_delet = Materials.query.get_or_404(id)
+    delet = Materials.query.get_or_404(id)
 
     try:
-        db.session.delete(task_to_delet)
+        db.session.delete(delet)
         db.session.commit()
         return redirect('/smaterialsview')
     except:
@@ -273,7 +274,7 @@ def amaterialsedit(id):
         material.reason = ''
         db.session.commit()
         flash('Your post has been updated!', 'success')
-        return redirect('/admin')
+        return redirect('/amaterialsview')
     elif request.method == 'GET':
         form.name.data = material.name
         form.brand.data = material.brand
@@ -304,15 +305,17 @@ def aapprovededit(id):
         material.name = form.name.data
         material.brand = form.brand.data
         material.price = form.price.data
+        material.offerprice = form.offerprice.data
         material.place = form.place.data
         material.avail = form.avail.data
         db.session.commit()
         flash('Your post has been updated!', 'success')
-        return redirect('/')
+        return redirect('/admins')
     elif request.method == 'GET':
         form.name.data = material.name
         form.brand.data = material.brand
         form.price.data = material.price
+        form.offerprice.data = material.offerprice
         form.place.data = material.place
         form.avail.data = material.avail
         form.owner.data = material.sowner
@@ -346,17 +349,12 @@ def areject(id):
 def umaterialprofile(id):
     form=Cart()
     material = Materials.query.get_or_404(id)
-    if form.validate_on_submit():
-        material.cart = 'added'
-        db.session.commit()
-        flash('Material added to Cart', 'success')
-        return redirect('/uindex')
     return render_template("umaterialprofile.html",material = material, form= form)
 
 @app.route('/ucart',methods = ['GET','POST'])
 def ucart():
     form = Cart1()
-    material = Materials.query.filter_by(cart = 'added').all()
+    material = Materials.query.filter_by(cart = 'added',uowner=current_user.username).all()
     
     return render_template("ucart.html",material=material, form=form)
 
@@ -386,7 +384,7 @@ def ucartremove(id):
 @app.route('/ucartadd/<int:id>')
 def ucartadd(id):
     add = Materials.query.get_or_404(id)
-    material = Materials(uowner = current_user.username,cart = 'added',status = 'rejected' ,name= add.name,sowner = add.sowner,brand = add.brand,avail = add.avail,price = add.price,place = add.place,image = add.image,reason = add.reason,desc = add.desc,uquantity = add.uquantity,upayment = add.upayment,utotalprice =add.utotalprice,uname = add.uname,uaddress = add.uaddress)
+    material = Materials(uowner = current_user.username,cart = 'added',status = 'rejected' ,name= add.name,sowner = add.sowner,brand = add.brand,avail = add.avail,price =  add.offerprice,place = add.place,image = add.image,reason = add.reason,desc = add.desc,uquantity = add.uquantity,upayment = add.upayment,utotalprice =add.utotalprice,uname = add.uname,uaddress = add.uaddress)
     db.session.add(material)
     db.session.commit()
     flash('added to your cart')
@@ -446,3 +444,47 @@ def delivery(id):
         db.session.commit()
         return redirect('/apurchasematerial')
     return render_template('/apurchasematerial.html',form=form)
+
+
+@app.route('/umyorder')
+def umyorder():
+    material = Materials.query.filter_by(uowner = current_user.username,upayment='cod').all()
+    return render_template("umyorder.html",material=material)
+
+
+@app.route('/aoffer')
+def aoffer():
+    form = Purchaseview()
+    material = Materials.query.filter_by( status= 'approved').all()
+    return render_template("aoffer.html",material = material,form=form)
+
+@app.route('/aofferadd/<int:id>',methods = ['GET','POST'])
+def aofferadd(id):
+    form = Purchaseview()
+    material = Materials.query.get_or_404(id)
+    if form.validate_on_submit:
+        material.offerprice = form.name.data
+        material.offer = 'added'
+        dis= int(material.price)- int(material.offerprice)
+        material.discount = dis
+        db.session.commit()
+        flash ("offer added")
+        return redirect('/aoffer')
+    elif request.method == 'GET':
+        form.name.data = material.offerprice
+    return render_template('/aoffer.html',form=form,material = material)
+
+@app.route('/aofferview')
+def aofferview():
+    material = Materials.query.filter_by(offer='added').all()
+    return render_template("aofferview.html",material=material)
+
+
+@app.route('/offerremove/<int:id>')
+def offerremove(id):
+    remove = Materials.query.get_or_404(id)
+    remove.offer = 'no'
+    remove.offerprice = 'NULL'
+    remove.discount = 'NULL'
+    db.session.commit()
+    return redirect("/aofferview")

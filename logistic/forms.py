@@ -70,6 +70,7 @@ class Materialedit(FlaskForm):
     brand = StringField('Brand', validators=[DataRequired()])
     avail = StringField('Avail quantity')
     price = StringField('Price')
+    offerprice = StringField('Offer Price')
     place = StringField('Place')
     pic = FileField('Upload Picture', validators=[FileAllowed(['jpg', 'png','jpeg'])])
     owner = StringField('Owner')

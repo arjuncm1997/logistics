@@ -1,0 +1,64 @@
+{% extends 'adminlayout.html'%}
+{% block content %}
+
+
+<div class="main-page">
+  <div class="tables">
+    <h2 class="title1"></h2>
+    <div class="panel-body widget-shadow">
+      <h4>Materials View:</h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th style="width: 226px;">Material</th>
+            <th>Images</th>
+            <th style="width: 176px;">Current Price</th>
+            <th>Offer Price</th>
+            <th style="width: 176px;">Add New Offer</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for mat in material %}
+          <tr>
+            <th scope="row">{{mat.id}}</th>
+            <td>name: {{mat.name}}</br>
+              brand: {{mat.brand}}
+            
+            </td>
+            <td><span class="image-block">
+              <a class="image-zoom" href="static/pics/{{mat.image}}" rel="prettyPhoto[gallery]" style="height: 250px;width: 335px;">
+                 <figure>
+                    <img src="static/pics/{{mat.image}}" class="img-fluid" alt="" style="height: 50px;width: 50px;">
+                    <figcaption>
+                       
+                    </figcaption>
+                 </figure>
+              </a>
+           </span></td>
+           <td>{{mat.price}}</td>
+           <td>{{mat.offerprice}}</td>
+           <form action="/aofferadd/{{mat.id}}" method="POST">
+            {{form.hidden_tag()}}
+           <td> {% if form.name.errors %}
+            {{ form.name(class="form-control form-control-lg is-invalid") }}
+            <div class="invalid-feedback">
+                {% for error in form.name.errors %}
+                    <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            {{ form.name(class="form-control form-control-lg") }}
+        {% endif %}</td>
+            <td><a href="">{{ form.submit(class="btn btn-outline-info") }}</a></td>
+        </form>
+          </tr>
+          {% endfor%}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
