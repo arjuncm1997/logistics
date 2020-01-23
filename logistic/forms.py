@@ -4,7 +4,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextA
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flask_login import current_user
-from logistic.models import Materials, Login,Offer
+from logistic.models import Materials, Login,Offer, Credit ,Pay
 
 
 
@@ -38,6 +38,15 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
+class Account(FlaskForm):
+    name = StringField('Name')
+    email = StringField('Email', validators=[Email()])
+    pic = FileField('Upload Picture', validators=[FileAllowed(['jpg', 'png','jpeg'])])
+    submit = SubmitField('Submit')
+
+
+
+
 class Material(FlaskForm):
     name = StringField('Name',
                         validators=[DataRequired()])
@@ -45,6 +54,7 @@ class Material(FlaskForm):
     avail = StringField('Avail quantity')
     price = StringField('Price')
     place = StringField('Place')
+    desc = StringField('Description')
     pic = FileField('Upload Picture', validators=[FileAllowed(['jpg', 'png','jpeg'])])
     submit = SubmitField('Submit')
 
@@ -107,3 +117,30 @@ class Purchaseview(FlaskForm):
                         
     submit = SubmitField('submitt')
 
+class Creditcard(FlaskForm):
+    name = StringField('Name',render_kw={"placeholder":"Name"},
+                        validators=[DataRequired()])
+    number = StringField('number',render_kw={"placeholder":".... .... .... ...."},validators=[DataRequired()])
+    cvv = StringField(' cvv',render_kw={"placeholder":"..."},
+                        validators=[DataRequired()])
+    date = StringField('date',render_kw={"placeholder":"MM/YY"},
+                        validators=[DataRequired()])
+    submit = SubmitField('Make A Payment')
+
+class Paypal(FlaskForm):
+    number = StringField('number',render_kw={"placeholder":"xxxx xxxx xxxx xxxx"},
+                        validators=[DataRequired()])
+    name = StringField('Name',render_kw={"placeholder":"Name"},validators=[DataRequired()])
+    cvv = StringField(' cvv',render_kw={"placeholder":"xxx"},
+                        validators=[DataRequired()])
+    date = StringField('date',render_kw={"placeholder":"MM/YY"},
+                        validators=[DataRequired()])
+    submit = SubmitField('Proceed Payment')
+
+
+
+class Changepassword(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm New Password',
+                                     validators=[ EqualTo('password')])
+    submit = SubmitField('Reset Password')

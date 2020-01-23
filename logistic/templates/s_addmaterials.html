@@ -44,6 +44,22 @@
                                       {% endif %}
          </div>
       </div>
+      <div class="form-group">
+        
+        <div class="controls">
+        {{ form.desc.label(class="form-control-label") }}
+                                      {% if form.desc.errors %}
+                                          {{ form.desc(class="form-control form-control-lg is-invalid") }}
+                                          <div class="invalid-feedback">
+                                              {% for error in form.desc.errors %}
+                                                  <span>{{ error }}</span>
+                                              {% endfor %}
+                                          </div>
+                                      {% else %}
+                                          {{ form.desc(class="form-control form-control-lg") }}
+                                      {% endif %}
+         </div>
+      </div>
 
       <div class="form-group">
        

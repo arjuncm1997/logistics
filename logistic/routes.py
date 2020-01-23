@@ -2,26 +2,26 @@ import os
 from flask import Flask
 from flask import render_template, flash, redirect, request, abort, url_for
 from logistic import app,db, bcrypt
-from logistic.forms import Material, RegistrationForm, LoginForm, Offers, Materialedit,Reject, Cart, Cart1,Purchaseview, Cartaddress, Cod
-from logistic.models import Materials, Login, Offer
+from logistic.forms import Material, RegistrationForm, LoginForm, Offers,Account ,Changepassword, Materialedit,Reject,Paypal, Creditcard,Cart, Cart1,Purchaseview, Cartaddress, Cod
+from logistic.models import Materials, Login, Offer,Credit, Pay, Contact
 from random import randint
 from PIL import Image
 from flask_login import login_user, current_user, logout_user, login_required
 
 @app.route('/')
 def index():
-    mat = Materials.query.all()
-    return render_template("index.html",mat=mat)
+    material = Materials.query.filter_by(status='approved',offer='no').all()
+    material2 = Materials.query.filter_by(status='approved',offer='added').all()
+    return render_template("index.html",material=material,material2 = material2)
 
-@app.route('/contact')
-def contact():
-    return render_template("contact.html")
+
 
 @app.route('/about')
 def about():
     return render_template("about.html")
 
 @app.route('/uindex')
+@login_required
 def uindex():
     material = Materials.query.filter_by(status='approved',offer='no').all()
     material2 = Materials.query.filter_by(status='approved',offer='added').all()
@@ -31,6 +31,7 @@ def uindex():
 
 
 @app.route('/admin')
+@login_required
 def admin():
     return render_template("admin.html")
 
@@ -95,10 +96,12 @@ def registerseller():
     return render_template("registerseller.html",form=form)
 
 @app.route('/sindex')
+@login_required
 def sindex():
     return render_template("sindex.html")
 
 @app.route('/s_addmaterials',methods=['GET', 'POST'])
+@login_required
 def s_addmaterials():
     form=Material()
     if form.validate_on_submit():
@@ -107,7 +110,7 @@ def s_addmaterials():
             view = pic_file
         print(view)  
     
-        material = Materials(sowner= current_user.username,name=form.name.data,brand=form.brand.data,place=form.place.data,price = form.price.data,avail=form.avail.data,image=view, status='...')
+        material = Materials(sowner= current_user.username,name=form.name.data,brand=form.brand.data,desc = form.desc.data, place=form.place.data,price = form.price.data,avail=form.avail.data,image=view, status='...')
        
         db.session.add(material)
         db.session.commit()
@@ -118,12 +121,14 @@ def s_addmaterials():
     return render_template("s_addmaterials.html",form=form)
 
 @app.route('/smaterialsview')
+@login_required
 def smaterialsview():
     material = Materials.query.filter_by(sowner=current_user.username)
     return render_template("smaterialsview.html",mat=material)
 
 
 @app.route('/smaterialsedit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def smaterialsedit(id):
     material = Materials.query.get_or_404(id)
     
@@ -134,6 +139,7 @@ def smaterialsedit(id):
             material.image = picture_file
         material.name = form.name.data
         material.brand = form.brand.data
+        material.desc = form.desc.data
         material.price = form.price.data
         material.place = form.place.data
         material.avail = form.avail.data
@@ -143,6 +149,7 @@ def smaterialsedit(id):
     elif request.method == 'GET':
         form.name.data = material.name
         form.brand.data = material.brand
+        form.desc.data = material.desc
         form.price.data = material.price
         form.place.data = material.place
         form.avail.data = material.avail
@@ -165,67 +172,7 @@ def delete(id):
 
 
 
-@app.route("/saddoffer",methods = ['GET','POST'])
-def saddoffer():
-    form=Offers()
-    model=""
-    if form.validate_on_submit():
-        if form.pic.data:
-            profile=save_picture(form.pic.data)
-            model=profile
 
-        material=form.matname.data
-        offer = Offer(owner=current_user.username,name=form.name.data, matname=material.name,disprice=form.price.data,image=model )
-        
-        db.session.add(offer)
-        db.session.commit()
-        flash('offer has been created')
-        return redirect('/sindex')
-    return render_template('saddoffer.html',form=form ,title='New Offer',model=model)
-
-
-
-
-@app.route('/sofferview')
-def sofferview():
-    offer = Offer.query.all()
-    return render_template("sofferview.html",offer = offer)
-
-
-
-
-@app.route('/sofferedit/<int:id>', methods=['GET', 'POST'])
-def sofferedit(id):
-    offer = Offer.query.get_or_404(id)
-    
-    form = Offers()
-    if form.validate_on_submit():
-        if form.pic.data:
-            picture_file = save_picture(form.pic.data)
-            material.image = picture_file
-        offer.name = form.name.data
-        offer.price = form.price.data
-        db.session.commit()
-        flash('Your post has been updated!', 'success')
-        return redirect('/sofferview')
-    elif request.method == 'GET':
-        form.name.data = offer.name
-        form.matname.data = offer.matname
-        form.price.data = offer.disprice
-    image_file = url_for('static', filename='pics/' + offer.image)
-    return render_template('sofferedit.html',form=form, offer=offer)
-
-
-@app.route('/offerdelete/<int:id>')
-def offerdelete(id):
-    task_to_delet = Offer.query.get_or_404(id)
-
-    try:
-        db.session.delete(task_to_delet)
-        db.session.commit()
-        return redirect('/sofferview')
-    except:
-        return 'There was a problem deleting that task'
 
 
 
@@ -251,12 +198,14 @@ def save_picture(form_picture):
 
 
 @app.route('/amaterialsview')
+@login_required
 def amaterialsview():
     material = Materials.query.filter_by( status= '...').all()
     return render_template("amaterialsview.html",material = material)
 
 
 @app.route('/amaterialsedit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def amaterialsedit(id):
     material = Materials.query.get_or_404(id)
     
@@ -288,12 +237,14 @@ def amaterialsedit(id):
 
 
 @app.route('/aapprovedmaterials')
+@login_required
 def aapprovedmaterials():
     material = Materials.query.filter_by( status= 'approved').all()
     return render_template("aapprovedmaterials.html",material = material)
 
 
 @app.route('/aapprovededit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def aapprovededit(id):
     material = Materials.query.get_or_404(id)
     
@@ -330,6 +281,7 @@ def aapprovededit(id):
 
 
 @app.route('/areject/<int:id>', methods=['GET', 'POST'])
+@login_required
 def areject(id):
     material = Materials.query.get_or_404(id)
     
@@ -346,12 +298,14 @@ def areject(id):
 
 
 @app.route('/umaterialprofile/<int:id>', methods=['GET', 'POST'])
+@login_required
 def umaterialprofile(id):
     form=Cart()
     material = Materials.query.get_or_404(id)
     return render_template("umaterialprofile.html",material = material, form= form)
 
 @app.route('/ucart',methods = ['GET','POST'])
+@login_required
 def ucart():
     form = Cart1()
     material = Materials.query.filter_by(cart = 'added',uowner=current_user.username).all()
@@ -360,6 +314,7 @@ def ucart():
 
 
 @app.route('/ucartto/<int:id>', methods = ['GET','POST'])
+@login_required
 def ucartto(id):
     form = Cart1()
     material = Materials.query.get_or_404(id)
@@ -371,6 +326,7 @@ def ucartto(id):
     return render_template("ucart.html", form=form)
 
 @app.route('/ucartremove/<int:id>')
+@login_required
 def ucartremove(id):
     remove = Materials.query.get_or_404(id)
     try:
@@ -382,9 +338,20 @@ def ucartremove(id):
 
 
 @app.route('/ucartadd/<int:id>')
+@login_required
 def ucartadd(id):
     add = Materials.query.get_or_404(id)
     material = Materials(uowner = current_user.username,cart = 'added',status = 'rejected' ,name= add.name,sowner = add.sowner,brand = add.brand,avail = add.avail,price =  add.offerprice,place = add.place,image = add.image,reason = add.reason,desc = add.desc,uquantity = add.uquantity,upayment = add.upayment,utotalprice =add.utotalprice,uname = add.uname,uaddress = add.uaddress)
+    db.session.add(material)
+    db.session.commit()
+    flash('added to your cart')
+    return redirect('/uindex')
+
+@app.route('/ucartadd1/<int:id>')
+@login_required
+def ucartadd1(id):
+    add = Materials.query.get_or_404(id)
+    material = Materials(uowner = current_user.username,cart = 'added',status = 'rejected' ,name= add.name,sowner = add.sowner,brand = add.brand,avail = add.avail,price =  add.price,place = add.place,image = add.image,reason = add.reason,desc = add.desc,uquantity = add.uquantity,upayment = add.upayment,utotalprice =add.utotalprice,uname = add.uname,uaddress = add.uaddress)
     db.session.add(material)
     db.session.commit()
     flash('added to your cart')
@@ -395,47 +362,104 @@ def ucartadd(id):
 
 
 @app.route('/ucartaddress/<int:id>', methods = ['GET','POST'])
+@login_required
 def ucartaddress(id):
     form = Cartaddress()
     material = Materials.query.get_or_404(id)
     if form.validate_on_submit():
         material.uname = form.name.data
+        material.uphone = form.phone.data
         material.uaddress = form.address.data
         db.session.commit()
         return redirect('/upayment/'+str(material.id))
     return render_template('/ucartaddress.html',mat = material,form=form)
 
 @app.route('/upayment/<int:id>')
+@login_required
 def upayment(id):
     form = Cod()
+    form1 = Creditcard()
+    form2 = Paypal()
     material = Materials.query.get_or_404(id)
-    return render_template('upayment.html',material = material,form=form)
+    return render_template('upayment.html',material = material,form=form,form1 =form1,form2=form2)
 
 
 @app.route('/cod/<int:id>',methods = ['GET','POST'])
+@login_required
 def cod(id):
     form = Cod()
+    form1 = Creditcard()
+    form2 = Paypal()
     material = Materials.query.get_or_404(id)
     if form.validate_on_submit():
         material.upayment = 'cod'
+        material.purchase = 'purchased'
         material.cart = 'removed'
         db.session.commit()
         return redirect('/successful')
-    return render_template('/ucartaddress.html',mat = material,form=form)
+    return render_template('/upayment.html',mat = material,form=form, form1 =form1,form2=form2)
+
+
+
+@app.route('/creditcard/<int:id>',methods = ['GET','POST'])
+@login_required
+def creditcard(id):
+    form = Cod()
+    form1 = Creditcard()
+    form2 = Paypal()
+    material = Materials.query.get_or_404(id)
+    if form1.validate_on_submit():
+        material.upayment = 'credit card'
+        material.purchase = 'purchased'
+        material.cart = 'removed'
+        db.session.commit()
+    if form1.validate_on_submit():
+        credit = Credit(userid = material.id,username = material.name,name = form1.name.data,card= form1.number.data ,cvv=form1.cvv.data , expdate=form1.date.data)
+        db.session.add(credit)
+        db.session.commit()
+        return redirect('/successful1')
+    return render_template('/upayment.html',form=form ,form1 =form1,form2=form2)
+
+@app.route('/paypal/<int:id>',methods = ['GET','POST'])
+@login_required
+def paypal(id):
+    form = Cod()
+    form1 = Creditcard()
+    form2 = Paypal()
+    material = Materials.query.get_or_404(id)
+    if form2.validate_on_submit():
+        material.upayment = 'Paypal'
+        material.purchase = 'purchased'
+        material.cart = 'removed'
+        db.session.commit()
+    if form2.validate_on_submit():
+        pay = Pay(userid = material.id,username = material.name,name = form2.name.data,card= form2.number.data ,cvv=form2.cvv.data , validdate=form2.date.data)
+        db.session.add(pay)
+        db.session.commit()
+        return redirect('/successful1')
+    return render_template('/upayment.html',form=form ,form1 =form1,form2=form2)
     
 @app.route('/successful')
+@login_required
 def successful():
     return render_template("successful.html")
 
+@app.route('/successful1')
+@login_required
+def successful1():
+    return render_template("successful1.html")
+
 
 @app.route('/apurchasematerial')
+@login_required
 def apurchasematerial():
     form =Purchaseview()
-    material = Materials.query.filter_by(upayment="cod").all()
+    material = Materials.query.filter_by(purchase = 'purchased').all()
     return render_template("apurchasematerial.html",material = material,form=form)
 
 
 @app.route('/delivery/<int:id>',methods=['GET','POST'])
+@login_required
 def delivery(id):
     form = Purchaseview()
     material = Materials.query.get_or_404(id)
@@ -447,18 +471,21 @@ def delivery(id):
 
 
 @app.route('/umyorder')
+@login_required
 def umyorder():
     material = Materials.query.filter_by(uowner = current_user.username,upayment='cod').all()
     return render_template("umyorder.html",material=material)
 
 
 @app.route('/aoffer')
+@login_required
 def aoffer():
     form = Purchaseview()
     material = Materials.query.filter_by( status= 'approved').all()
     return render_template("aoffer.html",material = material,form=form)
 
 @app.route('/aofferadd/<int:id>',methods = ['GET','POST'])
+@login_required
 def aofferadd(id):
     form = Purchaseview()
     material = Materials.query.get_or_404(id)
@@ -475,6 +502,7 @@ def aofferadd(id):
     return render_template('/aoffer.html',form=form,material = material)
 
 @app.route('/aofferview')
+@login_required
 def aofferview():
     material = Materials.query.filter_by(offer='added').all()
     return render_template("aofferview.html",material=material)
@@ -488,3 +516,160 @@ def offerremove(id):
     remove.discount = 'NULL'
     db.session.commit()
     return redirect("/aofferview")
+
+
+
+@app.route("/uaccount/<int:id>", methods=['GET', 'POST'])
+@login_required
+def uaccount(id):
+    form = Account()
+    if form.validate_on_submit():
+        if form.pic.data:
+            picture_file = save_picture(form.pic.data)
+            current_user.image = picture_file
+        current_user.username = form.name.data
+        current_user.email = form.email.data
+        db.session.commit() 
+    elif request.method == 'GET':
+        form.name.data = current_user.username
+        form.email.data = current_user.email
+    image_file = url_for('static', filename='pics/' + current_user.image)
+    return render_template('uaccount.html', title='Account', image_file=image_file, form=form)
+
+@app.route("/saccount/<int:id>", methods=['GET', 'POST'])
+@login_required
+def saccount(id):
+    form = Account()
+    if form.validate_on_submit():
+        if form.pic.data:
+            picture_file = save_picture(form.pic.data)
+            current_user.image = picture_file
+        current_user.username = form.name.data
+        current_user.email = form.email.data
+        db.session.commit() 
+    elif request.method == 'GET':
+        form.name.data = current_user.username
+        form.email.data = current_user.email
+    image_file = url_for('static', filename='pics/' + current_user.image)
+    return render_template('saccount.html', title='Account', image_file=image_file, form=form)
+
+
+@app.route('/sfeedback',methods=['GET', 'POST'])
+@login_required
+def sfeedback():
+    if request.method=='POST':
+        subject= request.form['subject']
+        message= request.form['message']
+        
+        new = Contact(name=current_user.username, email = current_user.email,subject =subject,message=message,usertype = 'seller')
+        try:
+            db.session.add(new)
+            db.session.commit()
+            return redirect('/sindex')
+
+        except:
+            return 'not add'  
+    else:
+        return render_template("sfeedback.html")
+
+
+@app.route('/ufeedback',methods=['GET', 'POST'])
+@login_required
+def ufeedback():
+    if request.method=='POST':
+        subject= request.form['subject']
+        message= request.form['message']
+        
+        new = Contact(name=current_user.username, email = current_user.email,subject =subject,message=message,usertype = 'user')
+        try:
+            db.session.add(new)
+            db.session.commit()
+            return redirect('/uindex')
+
+        except:
+            return 'not add'  
+    else:
+        return render_template("ufeedback.html")
+
+
+@app.route('/contact',methods=['GET', 'POST'])
+@login_required
+def contact():
+    if request.method=='POST':
+        name= request.form['name']
+        email= request.form['email']
+        subject= request.form['subject']
+        message= request.form['message']
+        
+        new = Contact(name=name, email = email,subject =subject,message=message,usertype = 'public')
+        try:
+            db.session.add(new)
+            db.session.commit()
+            return redirect('/')
+
+        except:
+            return 'not add'  
+    else:
+        return render_template("contact.html")
+
+
+@app.route('/auserfeedback')
+@login_required
+def auserfeedback():
+    feedback = Contact.query.filter_by(usertype='user').all()
+    return render_template("auserfeedback.html",feedback=feedback)
+
+@app.route('/asellerfeedback')
+@login_required
+def asellerfeedback():
+    feedback = Contact.query.filter_by(usertype='seller').all()
+    return render_template("asellerfeedback.html",feedback=feedback)
+
+@app.route('/apublicfeedback')
+@login_required
+def apublicfeedback():
+    feedback = Contact.query.filter_by(usertype='public').all()
+    return render_template("apublicfeedback.html",feedback=feedback)
+
+
+@app.route('/aprofile/<int:id>',methods=['GET','POST'])
+@login_required
+def aprofile(id):
+    form = Account()
+    if form.validate_on_submit():
+        if form.pic.data:
+            picture_file = save_picture(form.pic.data)
+            current_user.image = picture_file
+        current_user.username = form.name.data
+        current_user.email = form.email.data
+        db.session.commit() 
+    elif request.method == 'GET':
+        form.name.data = current_user.username
+        form.email.data = current_user.email
+    image_file = url_for('static', filename='pics/' + current_user.image)
+    return render_template("aprofile.html",form= form)
+
+
+@app.route('/auserview')
+def auserview():
+    user = Login.query.filter_by(usertype='user').all()
+    return render_template("auserview.html",user=user)
+
+@app.route('/asellerview')
+def asellerview():
+    user = Login.query.filter_by(usertype='seller').all()
+    return render_template("asellerview.html",user=user)
+
+@app.route('/changepassword', methods=['GET', 'POST'])
+def changepassword():
+    form = Changepassword()
+    # if form.validate_on_submit():
+    #     hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+    #     current_user.password = hashed_password
+    #     db.session.commit()
+    #     logout_user()
+    #     flash('Your Password Has Been Changed')
+    #     return redirect('/login')
+    # elif request.method == 'GET':
+    #     hashed_password = current_user.password  
+    return render_template('changepassword.html', form=form)
