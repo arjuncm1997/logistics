@@ -1,0 +1,56 @@
+{% extends 'publiclayout.html' %}
+{% block content %}
+
+
+ 
+<div class="contact-w3l">
+    <div class="container">
+        <!-- tittle heading -->
+        <h3 class="tittle-w3l">Enter Your Email Here
+            <span class="heading-style">
+                <i></i>
+                <i></i>
+                <i></i>
+            </span>
+        </h3>
+        <!-- //tittle heading -->
+        <!-- contact -->
+        <div class="register agileits">
+           
+                <div class="contact-form wthree" style="width: 480px;">
+                    <form action="" method="POST">
+                        {{form.hidden_tag()}}
+                        <div class="form-group">
+						
+                            {{ form.email.label(class="form-control-label") }}
+                            {% if form.email.errors %}
+                                {{ form.email(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.email(class="form-control form-control-lg") }}
+                            {% endif %}
+                    </div>
+                    
+                        <div class="form-group">
+                                   
+                            {{ form.submit(class="btn btn-outline-info") }}
+                            
+                    </div>
+                        
+                    </form>
+                </div>
+           
+        </div>
+        <!-- //contact -->
+    </div>
+</div>
+            
+   
+  
+
+
+{% endblock %}

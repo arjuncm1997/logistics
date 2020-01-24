@@ -1,12 +1,13 @@
 import os
 from flask import Flask
 from flask import render_template, flash, redirect, request, abort, url_for
-from logistic import app,db, bcrypt
-from logistic.forms import Material, RegistrationForm, LoginForm, Offers,Account ,Changepassword, Materialedit,Reject,Paypal, Creditcard,Cart, Cart1,Purchaseview, Cartaddress, Cod
+from logistic import app,db, bcrypt, mail
+from logistic.forms import Material, RegistrationForm, LoginForm, Offers,Account ,Changepassword,Reset,Changepassword, Materialedit,Reject,Paypal, Creditcard,Cart, Cart1,Purchaseview, Cartaddress, Cod
 from logistic.models import Materials, Login, Offer,Credit, Pay, Contact
 from random import randint
 from PIL import Image
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Message
 
 @app.route('/')
 def index():
@@ -211,9 +212,6 @@ def amaterialsedit(id):
     
     form = Materialedit()
     if form.validate_on_submit():
-        if form.pic.data:
-            picture_file = save_picture(form.pic.data)
-            material.image = picture_file
         material.name = form.name.data
         material.brand = form.brand.data
         material.price = form.price.data
@@ -232,7 +230,6 @@ def amaterialsedit(id):
         form.avail.data = material.avail
         form.owner.data = material.sowner
 
-    image_file = url_for('static', filename='pics/' + material.image)
     return render_template('amaterialsedit.html',form=form, material=material)
 
 
@@ -250,9 +247,6 @@ def aapprovededit(id):
     
     form = Materialedit()
     if form.validate_on_submit():
-        if form.pic.data:
-            picture_file = save_picture(form.pic.data)
-            material.image = picture_file
         material.name = form.name.data
         material.brand = form.brand.data
         material.price = form.price.data
@@ -271,7 +265,6 @@ def aapprovededit(id):
         form.avail.data = material.avail
         form.owner.data = material.sowner
 
-    image_file = url_for('static', filename='pics/' + material.image)
     return render_template('aapprovededit.html',form=form, material=material)
 
 
@@ -395,11 +388,16 @@ def cod(id):
         material.upayment = 'cod'
         material.purchase = 'purchased'
         material.cart = 'removed'
+        sendmail()
         db.session.commit()
         return redirect('/successful')
     return render_template('/upayment.html',mat = material,form=form, form1 =form1,form2=form2)
 
-
+def sendmail():
+    msg = Message('successful',
+                  recipients=[current_user.email])
+    msg.body = f''' your Order Succsessfully Completed...   Track Your Order   'http://127.0.0.1:5000/login' '''
+    mail.send(msg)
 
 @app.route('/creditcard/<int:id>',methods = ['GET','POST'])
 @login_required
@@ -412,6 +410,7 @@ def creditcard(id):
         material.upayment = 'credit card'
         material.purchase = 'purchased'
         material.cart = 'removed'
+        sendmail()
         db.session.commit()
     if form1.validate_on_submit():
         credit = Credit(userid = material.id,username = material.name,name = form1.name.data,card= form1.number.data ,cvv=form1.cvv.data , expdate=form1.date.data)
@@ -431,6 +430,7 @@ def paypal(id):
         material.upayment = 'Paypal'
         material.purchase = 'purchased'
         material.cart = 'removed'
+        sendmail()
         db.session.commit()
     if form2.validate_on_submit():
         pay = Pay(userid = material.id,username = material.name,name = form2.name.data,card= form2.number.data ,cvv=form2.cvv.data , validdate=form2.date.data)
@@ -593,7 +593,6 @@ def ufeedback():
 
 
 @app.route('/contact',methods=['GET', 'POST'])
-@login_required
 def contact():
     if request.method=='POST':
         name= request.form['name']
@@ -663,13 +662,59 @@ def asellerview():
 @app.route('/changepassword', methods=['GET', 'POST'])
 def changepassword():
     form = Changepassword()
-    # if form.validate_on_submit():
-    #     hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-    #     current_user.password = hashed_password
-    #     db.session.commit()
-    #     logout_user()
-    #     flash('Your Password Has Been Changed')
-    #     return redirect('/login')
-    # elif request.method == 'GET':
-    #     hashed_password = current_user.password  
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        current_user.password = hashed_password
+        db.session.commit()
+        logout_user()
+        flash('Your Password Has Been Changed')
+        return redirect('/login') 
     return render_template('changepassword.html', form=form)
+
+
+
+
+
+
+
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message('Password Reset Request',
+                  recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+{url_for('resettoken', token=token, _external=True)}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+    mail.send(msg)
+
+
+
+
+
+
+@app.route('/resetrequest', methods=['GET','POST'])
+def resetrequest():
+    form = Reset()
+    if form.validate_on_submit():
+        user = Login.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash('An email has been sent with instructions to reset your password.', 'info')
+        return redirect('/login')
+    return render_template("resetrequest.html",form = form)
+
+
+@app.route("/resetpassword/<token>", methods=['GET', 'POST'])
+def resettoken(token):
+    user = Login.verify_reset_token(token)
+    if user is None:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect('/resetrequest')
+    form = Changepassword()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        flash('Your password has been updated! You are now able to log in', 'success')
+        return redirect('/login')
+    return render_template('resetpassword.html', title='Reset Password', form=form)

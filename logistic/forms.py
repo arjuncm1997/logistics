@@ -18,11 +18,7 @@ class RegistrationForm(FlaskForm):
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
-    def validate_username(self, username):
-        user = Login.query.filter_by(username=username.data).first()
-        if user:
-            raise ValidationError('That username is taken. Please choose a different one.')
-
+    
     def validate_email(self, email):
         user = Login.query.filter_by(email=email.data).first()
         if user:
@@ -137,6 +133,24 @@ class Paypal(FlaskForm):
                         validators=[DataRequired()])
     submit = SubmitField('Proceed Payment')
 
+
+
+class Changepassword(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm New Password',
+                                     validators=[ EqualTo('password')])
+    submit = SubmitField('Reset Password')
+
+
+class Reset(FlaskForm):
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        user = Login.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('There is no account with that email. You must register first.')
 
 
 class Changepassword(FlaskForm):
