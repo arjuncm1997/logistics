@@ -473,7 +473,7 @@ def delivery(id):
 @app.route('/umyorder')
 @login_required
 def umyorder():
-    material = Materials.query.filter_by(uowner = current_user.username,upayment='cod').all()
+    material = Materials.query.filter_by(uowner = current_user.username,purchase='purchased').all()
     return render_template("umyorder.html",material=material)
 
 
